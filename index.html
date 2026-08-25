@@ -3,180 +3,317 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Minecraft Server & Mods</title>
+  <title>Minecraft Server Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg: #0d1117;
-      --card-bg: rgba(22, 27, 34, 0.9);
-      --card-border: rgba(255, 255, 255, 0.1);
-      --accent: #10b981;
-      --accent-glow: rgba(16, 185, 129, 0.2);
-      --text-main: #f0f6fc;
-      --text-muted: #8b949e;
-      --btn-secondary: #21262d;
-      --btn-secondary-hover: #30363d;
-      --red: #ef4444;
+      --bg-dark: #0a0c10;
+      --card-bg: rgba(18, 22, 31, 0.92);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --mc-green: #2ecc71;
+      --mc-green-glow: rgba(46, 204, 113, 0.35);
+      --mc-red: #e74c3c;
+      --mc-red-glow: rgba(231, 76, 60, 0.35);
+      --mc-gold: #f39c12;
+      --mc-gold-bg: rgba(243, 156, 18, 0.12);
+      --mc-diamond: #00d2d3;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --slot-bg: rgba(10, 12, 16, 0.7);
+      --slot-border: rgba(255, 255, 255, 0.06);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
-      background: radial-gradient(circle at 50% 0%, #1a2333 0%, var(--bg) 80%);
+      background: radial-gradient(circle at 50% 15%, #17202e 0%, var(--bg-dark) 85%);
       color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px 16px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 480px;
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 32px 24px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 35px var(--accent-glow);
+      padding: 30px 16px;
       position: relative;
     }
 
-    .header { text-align: center; margin-bottom: 24px; }
-    .tag {
-      display: inline-block;
-      font-size: 11px;
-      text-transform: uppercase;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      color: var(--accent);
-      background: rgba(16, 185, 129, 0.12);
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 8px;
+    /* Фоновые частицы */
+    .bg-particles {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, rgba(46, 204, 113, 0.2), transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(0, 210, 211, 0.18), transparent);
+      background-size: 140px 140px;
+      animation: floatBg 35s linear infinite;
+      z-index: 0;
+    }
+    @keyframes floatBg {
+      from { background-position: 0 0; }
+      to { background-position: 140px 280px; }
     }
 
-    .header h1 { font-size: 26px; font-weight: 800; }
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 540px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 2px solid var(--card-border);
+      border-radius: 24px;
+      padding: 28px 22px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(16, 185, 129, 0.08);
+      animation: cardAppear 0.5s ease-out;
+    }
+    @keyframes cardAppear {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 6px 14px;
-      border-radius: 12px;
+    /* Навигация по вкладкам */
+    .tab-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: var(--slot-bg);
+      border: 1px solid var(--slot-border);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 22px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
       font-size: 13px;
       font-weight: 700;
-      margin-top: 10px;
-      border: 1px solid var(--card-border);
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: #1e2638;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
-    .indicator { width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
-    .indicator.online { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-    .info-card {
-      background: rgba(13, 17, 23, 0.7);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 14px 16px;
+    /* Шапка */
+    .card-header { text-align: center; margin-bottom: 20px; position: relative; }
+    .server-badge {
+      display: inline-block;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: var(--mc-diamond);
+      background: rgba(0, 210, 211, 0.1);
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 210, 211, 0.25);
       margin-bottom: 12px;
+    }
+
+    .server-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 18px;
+      color: #ffffff;
+      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
+      margin-bottom: 12px;
+    }
+
+    /* Статус */
+    .status-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--slot-bg);
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--slot-border);
+    }
+    .status-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--mc-red);
+      box-shadow: 0 0 10px var(--mc-red);
+      transition: 0.3s;
+    }
+    .status-dot.online {
+      background: var(--mc-green);
+      box-shadow: 0 0 12px var(--mc-green-glow);
+    }
+    .status-text { font-family: 'Press Start 2P', monospace; font-size: 10px; }
+    .player-counter { font-size: 12px; font-weight: 700; color: var(--text-muted); border-left: 1px solid rgba(255,255,255,0.1); padding-left: 8px; }
+
+    /* Слоты IP / Port */
+    .connection-grid { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+    .connection-slot {
+      background: var(--slot-bg);
+      border: 1px solid var(--slot-border);
+      border-radius: 14px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+    .slot-label { font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--text-muted); }
+    .slot-value { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; color: #fff; }
 
-    .info-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; }
-    .info-value { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; color: #fff; }
-
-    .copy-btn {
-      background: var(--btn-secondary);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
+    .btn-copy {
+      background: #1e2533;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
       padding: 8px 14px;
       border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
       transition: 0.2s;
     }
-    .copy-btn:hover { background: var(--btn-secondary-hover); }
-    .copy-btn.copied { background: var(--accent); color: #000; }
+    .btn-copy:hover { background: #2a3448; }
+    .btn-copy.copied { background: var(--mc-green); color: #000; }
 
-    .divider { height: 1px; background: var(--card-border); margin: 24px 0; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); margin: 22px 0; }
 
-    .downloads-title {
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-muted);
-      margin-bottom: 14px;
+    /* Кнопки скачивания */
+    .section-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--mc-gold);
       text-align: center;
+      margin-bottom: 14px;
     }
-
-    .btn-main {
+    .btn-download-main {
       width: 100%;
-      background: var(--accent);
-      color: #0d1117;
+      background: linear-gradient(180deg, #2ecc71 0%, #27ae60 100%);
+      border: none;
+      border-bottom: 4px solid #1e8449;
+      color: #fff;
       padding: 14px 18px;
-      border-radius: 14px;
-      font-size: 15px;
+      border-radius: 12px;
+      font-size: 14px;
       font-weight: 800;
       text-decoration: none;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      transition: 0.2s;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 20px var(--mc-green-glow);
+      transition: 0.15s;
     }
-    .btn-main:hover { opacity: 0.9; transform: translateY(-1px); }
-
-    .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .btn-sub {
-      background: var(--btn-secondary);
+    .btn-download-main:hover { filter: brightness(1.08); transform: translateY(-2px); }
+    .sub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .btn-download-sub {
+      background: #181f2c;
+      border: 1px solid var(--slot-border);
+      border-bottom: 3px solid rgba(0, 0, 0, 0.4);
       color: var(--text-main);
-      border: 1px solid var(--card-border);
-      padding: 10px 8px;
-      border-radius: 12px;
+      padding: 10px 6px;
+      border-radius: 10px;
       font-size: 12px;
       font-weight: 700;
       text-decoration: none;
       text-align: center;
-      transition: 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
     }
-    .btn-sub:hover { background: var(--btn-secondary-hover); }
+    .btn-download-sub:hover { background: #222c3e; transform: translateY(-1px); }
 
-    .admin-toggle {
+    /* Карточки Инструкции */
+    .guide-step {
+      background: var(--slot-bg);
+      border: 1px solid var(--slot-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .step-number {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      background: var(--mc-gold-bg);
+      color: var(--mc-gold);
+      border: 1px solid rgba(243, 156, 18, 0.3);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .step-title { font-size: 14px; font-weight: 800; color: #fff; }
+    .step-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+    
+    .warning-box {
+      background: rgba(231, 76, 60, 0.1);
+      border-left: 3px solid var(--mc-red);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #fca5a5;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .step-img-wrapper {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #000;
+      margin-top: 6px;
+    }
+    .step-img {
+      width: 100%;
+      max-height: 220px;
+      object-fit: contain;
+      display: block;
+      transition: transform 0.2s;
+    }
+    .step-img:hover { transform: scale(1.02); }
+
+    /* Админ-кнопка */
+    .admin-btn {
       position: absolute;
       top: 18px;
       right: 18px;
-      background: transparent;
-      border: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--text-muted);
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
       cursor: pointer;
-      font-size: 18px;
-      opacity: 0.5;
     }
-    .admin-toggle:hover { opacity: 1; }
+    .admin-btn:hover { color: #fff; transform: rotate(45deg); }
 
-    .edit-modal {
+    .edit-drawer {
       display: none;
       margin-top: 16px;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 16px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
       border-radius: 14px;
-      border: 1px dashed var(--card-border);
+      padding: 14px;
     }
-    .edit-modal.active { display: block; }
-
-    .input-field {
+    .edit-drawer.active { display: block; }
+    .input-box {
       width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--card-border);
+      background: #0d1117;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
       padding: 8px 12px;
       color: #fff;
@@ -187,162 +324,276 @@
 </head>
 <body>
 
-  <div class="container">
-    <button class="admin-toggle" id="toggleEdit" title="Изменить IP/Порт">⚙️</button>
+  <div class="bg-particles"></div>
 
-    <div class="header">
-      <span class="tag">Minecraft Server</span>
-      <h1>⚡ НАШ СЕРВЕР</h1>
-      <div class="status-badge">
-        <div class="indicator" id="statusIndicator"></div>
-        <span id="statusText">Загрузка...</span>
-        <span id="playerCount" style="color: var(--text-muted); font-size: 12px;"></span>
+  <div class="card">
+    <button class="admin-btn" id="toggleEdit" title="Админ-панель">⚙️</button>
+
+    <!-- Вкладки -->
+    <div class="tab-switcher">
+      <button class="tab-btn active" onclick="switchTab('serverTab', this)">⚡ Сервер</button>
+      <button class="tab-btn" onclick="switchTab('guideTab', this)">📖 Инструкция</button>
+    </div>
+
+    <!-- ================= ВКЛАДКА 1: СЕРВЕР ================= -->
+    <div id="serverTab" class="tab-content active">
+      <div class="card-header">
+        <div class="server-badge">✦ MINECRAFT SERVER ✦</div>
+        <h1 class="server-title">НАШ СЕРВЕР</h1>
+        
+        <div class="status-container">
+          <div class="status-dot" id="statusDot"></div>
+          <span class="status-text" id="statusLabel">ОПРОС...</span>
+          <span class="player-counter" id="playerCount">0 / 0</span>
+        </div>
+      </div>
+
+      <div class="connection-grid">
+        <div class="connection-slot">
+          <div>
+            <div class="slot-label">🔴 IP АДРЕС</div>
+            <div class="slot-value" id="ipValue">Загрузка...</div>
+          </div>
+          <button class="btn-copy" onclick="copySlot('ipValue', this)">📋 Копировать</button>
+        </div>
+
+        <div class="connection-slot">
+          <div>
+            <div class="slot-label">⚡ ПОРТ</div>
+            <div class="slot-value" id="portValue">...</div>
+          </div>
+          <button class="btn-copy" onclick="copySlot('portValue', this)">📋 Копировать</button>
+        </div>
+      </div>
+
+      <!-- Админ-панель -->
+      <div class="edit-drawer" id="editDrawer">
+        <div style="font-size: 11px; font-weight: 700; color: var(--mc-diamond); margin-bottom: 8px;">
+          ОБНОВЛЕНИЕ АДРЕСА СЕРВЕРА:
+        </div>
+        <input type="text" id="inputIp" class="input-box" placeholder="Новый IP или домен">
+        <input type="text" id="inputPort" class="input-box" placeholder="Новый Порт">
+        <button class="btn-download-main" style="padding: 10px; font-size: 12px; margin-bottom: 0;" onclick="submitServerData()">
+          💾 Сохранить адрес для всех
+        </button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">📦 ФАЙЛЫ И МОДЫ</div>
+
+      <!-- Замени эти ссылки на публичные ссылки с Яндекс Диска -->
+      <a href="https://disk.yandex.ru/d/YOUR_ZIP_KEY" id="fullZipBtn" target="_blank" class="btn-download-main">
+        <span>📥</span> СКАЧАТЬ ВСЮ СБОРКУ (.ZIP)
+      </a>
+
+      <div class="sub-grid">
+        <a href="https://disk.yandex.ru/d/YOUR_MODS_KEY" target="_blank" class="btn-download-sub">
+          <span>🧩</span><span>Моды</span>
+        </a>
+        <a href="https://disk.yandex.ru/d/YOUR_CONFIGS_KEY" target="_blank" class="btn-download-sub">
+          <span>⚙️</span><span>Конфиги</span>
+        </a>
+        <a href="https://disk.yandex.ru/d/YOUR_SHADERS_KEY" target="_blank" class="btn-download-sub">
+          <span>✨</span><span>Шейдеры</span>
+        </a>
       </div>
     </div>
 
-    <!-- IP & PORT -->
-    <div class="info-card">
-      <div>
-        <div class="info-label">IP Адрес</div>
-        <div class="info-value" id="ipValue">...</div>
+    <!-- ================= ВКЛАДКА 2: ИНСТРУКЦИЯ ================= -->
+    <div id="guideTab" class="tab-content">
+      <div class="card-header">
+        <div class="server-badge">ГАЙД ПО УСТАНОВКЕ</div>
+        <h1 class="server-title" style="font-size: 15px;">КАК УСТАНОВИТЬ СБОРКУ</h1>
       </div>
-      <button class="copy-btn" onclick="copyText('ipValue', this)">Копировать</button>
-    </div>
 
-    <div class="info-card">
-      <div>
-        <div class="info-label">Порт</div>
-        <div class="info-value" id="portValue">...</div>
+      <!-- Шаг 1 -->
+      <div class="guide-step">
+        <div class="step-header">
+          <span class="step-number">ШАГ 1</span>
+          <span class="step-title">Выбор версии в TLauncher</span>
+        </div>
+        <div class="step-text">
+          Открой TLauncher и в выпадающем списке версий обязательно выбери версию <b>Fabric 26.1.1</b> (именно <b>Fabric</b>, не Forge и не чистую версию).
+        </div>
+        <div class="step-img-wrapper">
+          <img src="step1.png" class="step-img" alt="Выбор Fabric 26.1.1">
+        </div>
       </div>
-      <button class="copy-btn" onclick="copyText('portValue', this)">Копировать</button>
-    </div>
 
-    <!-- Редактирование -->
-    <div class="edit-modal" id="editModal">
-      <div class="info-label" style="margin-bottom: 8px;">Обновить адрес в Cloudflare KV:</div>
-      <input type="text" id="inputIp" class="input-field" placeholder="IP или домен (например, 95.21.33.10)">
-      <input type="text" id="inputPort" class="input-field" placeholder="Порт (например, 25565)">
-      <button class="btn-main" style="margin-bottom: 0; padding: 10px;" onclick="saveToServer()">Сохранить для всех</button>
-    </div>
+      <!-- Шаг 2 -->
+      <div class="guide-step">
+        <div class="step-header">
+          <span class="step-number">ШАГ 2</span>
+          <span class="step-title">Установка и вход в папку</span>
+        </div>
+        <div class="step-text">
+          Нажми «Установить» / «Войти в игру», чтобы лаунчер скачал нужную версию. После установки закрой игру, перезапусти TLauncher и нажми на <b>иконку зелёной папки</b> в правом нижнем углу.
+        </div>
+        <div class="step-img-wrapper">
+          <img src="step2.png" class="step-img" alt="Иконка папки в TLauncher">
+        </div>
+      </div>
 
-    <div class="divider"></div>
+      <!-- Шаг 3 -->
+      <div class="guide-step">
+        <div class="step-header">
+          <span class="step-number">ШАГ 3</span>
+          <span class="step-title">Перенос файлов сборки</span>
+        </div>
+        <div class="step-text">
+          В открывшуюся корневую папку игры перемести скачанный <b>.zip архив сборки</b> (или перенеси скачанные папки <code>mods</code>, <code>resourcepacks</code>, <code>shaderpacks</code>, <code>config</code>).
+        </div>
+        <div class="step-img-wrapper">
+          <img src="step3.png" class="step-img" alt="Папка игры Minecraft">
+        </div>
+      </div>
 
-    <!-- Загрузка файлов -->
-    <div class="downloads-title">📦 Файлы сборки</div>
-    
-    <!-- Замени ссылки на свои (Яндекс Диск / Google Drive) -->
-    <a href="https://disk.yandex.ru/YOUR_FULL_ZIP" id="fullZipLink" target="_blank" class="btn-main">
-      <span>⬇</span> СКАЧАТЬ ВСЮ СБОРКУ (.ZIP)
-    </a>
+      <!-- Шаг 4 -->
+      <div class="guide-step">
+        <div class="step-header">
+          <span class="step-number">ШАГ 4</span>
+          <span class="step-title">Распаковка и замена файлов</span>
+        </div>
+        <div class="step-text">
+          Нажми правой кнопкой мыши по архиву и выбери <b>«Извлечь в текущую папку»</b>.
+        </div>
+        <div class="step-img-wrapper" style="margin-bottom: 10px;">
+          <img src="step4.png" class="step-img" alt="Извлечь в текущую папку">
+        </div>
+        <div class="warning-box">
+          ⚠️ <b>Внимание:</b> Если у тебя уже были свои важные моды — заранее сохрани их в отдельное место. При запросе замены нажимай <b>«Да для всех»</b>.
+        </div>
+        <div class="step-img-wrapper">
+          <img src="step5.png" class="step-img" alt="Подтверждение замены файлов">
+        </div>
+      </div>
 
-    <div class="btn-grid">
-      <a href="https://disk.yandex.ru/YOUR_MODS" target="_blank" class="btn-sub">📁 Моды</a>
-      <a href="https://disk.yandex.ru/YOUR_CONFIGS" target="_blank" class="btn-sub">⚙️ Конфиги</a>
-      <a href="https://disk.yandex.ru/YOUR_SHADERS" target="_blank" class="btn-sub">✨ Шейдеры</a>
+      <!-- Шаг 5 -->
+      <div class="guide-step" style="text-align: center;">
+        <div class="step-header" style="justify-content: center;">
+          <span class="step-number">ШАГ 5</span>
+          <span class="step-title">Готово к игре!</span>
+        </div>
+        <div class="step-text">
+          Снова нажимай <b>«Войти в игру»</b> в TLauncher. Переходи на вкладку «⚡ Сервер», копируй актуальный IP/порт и заходи на сервер!
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    const API_URL = "https://mc-api.dimitrytam09.workers.dev/api/server";
+    const API_ENDPOINT = "https://mc-api.dimitrytam09.workers.dev/api/server";
 
-    // Получение данных из Cloudflare Worker при открытии
-    async function loadServerData() {
+    // Переключение вкладок
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // Загрузка адреса из Cloudflare
+    async function syncServerData() {
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(API_ENDPOINT);
         const data = await res.json();
 
-        document.getElementById('ipValue').textContent = data.ip;
-        document.getElementById('portValue').textContent = data.port;
-        document.getElementById('inputIp').value = data.ip;
-        document.getElementById('inputPort').value = data.port;
+        document.getElementById('ipValue').textContent = data.ip || "127.0.0.1";
+        document.getElementById('portValue').textContent = data.port || "25565";
+        document.getElementById('inputIp').value = data.ip || "";
+        document.getElementById('inputPort').value = data.port || "";
 
         if (data.modsUrl && data.modsUrl.startsWith('http')) {
-          document.getElementById('fullZipLink').href = data.modsUrl;
+          document.getElementById('fullZipBtn').href = data.modsUrl;
         }
 
-        checkServer(data.ip, data.port);
-      } catch (e) {
-        document.getElementById('statusText').textContent = "Ошибка API";
+        pingMinecraft(data.ip, data.port);
+      } catch (err) {
+        document.getElementById('statusLabel').textContent = "ОФФЛАЙН";
       }
     }
 
-    // Сохранение нового IP/порта в базу данных
-    async function saveToServer() {
-      const newIp = document.getElementById('inputIp').value.trim();
-      const newPort = document.getElementById('inputPort').value.trim();
-      const password = prompt("Введи пароль администратора (по умолчанию: admin12345):");
+    // Проверка онлайна
+    async function pingMinecraft(ip, port) {
+      const dot = document.getElementById('statusDot');
+      const label = document.getElementById('statusLabel');
+      const counter = document.getElementById('playerCount');
 
-      if (!password) return;
-
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${password}`
-          },
-          body: JSON.stringify({ ip: newIp, port: newPort })
-        });
-
-        if (res.ok) {
-          alert("Данные успешно сохранены в Cloudflare!");
-          document.getElementById('editModal').classList.remove('active');
-          loadServerData();
-        } else {
-          alert("Ошибка сохранения: неверный пароль.");
-        }
-      } catch (e) {
-        alert("Ошибка сети при отправке запроса.");
-      }
-    }
-
-    // Проверка статуса сервера
-    async function checkServer(ip, port) {
-      const indicator = document.getElementById('statusIndicator');
-      const statusText = document.getElementById('statusText');
-      const playerCount = document.getElementById('playerCount');
-
-      statusText.textContent = "Опрос сервера...";
-      indicator.className = "indicator";
+      label.textContent = "ПРОВЕРКА...";
+      dot.className = "status-dot";
 
       try {
         const res = await fetch(`https://api.mcstatus.io/v2/status/java/${ip}:${port}`);
         const data = await res.json();
 
         if (data.online) {
-          indicator.classList.add('online');
-          statusText.textContent = "ONLINE";
-          playerCount.textContent = `• Игроков: ${data.players.online}/${data.players.max}`;
+          dot.classList.add('online');
+          label.textContent = "ОНЛАЙН";
+          label.style.color = "var(--mc-green)";
+          counter.textContent = `${data.players.online} / ${data.players.max} игр.`;
         } else {
-          indicator.className = "indicator";
-          statusText.textContent = "OFFLINE";
-          playerCount.textContent = "";
+          dot.classList.remove('online');
+          label.textContent = "ОФФЛАЙН";
+          label.style.color = "var(--mc-red)";
+          counter.textContent = "0 / 0";
         }
       } catch (e) {
-        statusText.textContent = "OFFLINE / НЕИЗВЕСТНО";
-        playerCount.textContent = "";
+        label.textContent = "ОФФЛАЙН";
+        label.style.color = "var(--mc-red)";
+        counter.textContent = "- / -";
       }
     }
 
-    // Копирование текста
-    function copyText(elementId, btn) {
-      const text = document.getElementById(elementId).textContent;
+    // Админ сохранение
+    async function submitServerData() {
+      const newIp = document.getElementById('inputIp').value.trim();
+      const newPort = document.getElementById('inputPort').value.trim();
+      const pass = prompt("Введи пароль администратора (по умолчанию: admin12345):");
+
+      if (!pass) return;
+
+      try {
+        const res = await fetch(API_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${pass}`
+          },
+          body: JSON.stringify({ ip: newIp, port: newPort })
+        });
+
+        if (res.ok) {
+          alert("Данные успешно сохранены в Cloudflare!");
+          document.getElementById('editDrawer').classList.remove('active');
+          syncServerData();
+        } else {
+          alert("Ошибка: Неверный пароль.");
+        }
+      } catch (e) {
+        alert("Сбой сети при отправке запроса.");
+      }
+    }
+
+    // Копирование
+    function copySlot(elemId, btn) {
+      const text = document.getElementById(elemId).textContent;
       navigator.clipboard.writeText(text).then(() => {
-        const oldText = btn.textContent;
-        btn.textContent = 'Скопировано!';
+        const initialHtml = btn.innerHTML;
+        btn.innerHTML = "<span>✔</span> Скопировано!";
         btn.classList.add('copied');
         setTimeout(() => {
-          btn.textContent = oldText;
+          btn.innerHTML = initialHtml;
           btn.classList.remove('copied');
-        }, 1500);
+        }, 1400);
       });
     }
 
     document.getElementById('toggleEdit').addEventListener('click', () => {
-      document.getElementById('editModal').classList.toggle('active');
+      document.getElementById('editDrawer').classList.toggle('active');
     });
 
-    loadServerData();
+    syncServerData();
   </script>
 </body>
 </html>
