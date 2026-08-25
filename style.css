@@ -1,0 +1,597 @@
+:root {
+  --space-black: #05060b;
+  --galaxy-card-bg: rgba(12, 14, 26, 0.88);
+  --galaxy-card-border: rgba(168, 85, 247, 0.2);
+  --galaxy-purple: #a855f7;
+  --galaxy-purple-glow: rgba(168, 85, 247, 0.4);
+  --galaxy-indigo: #6366f1;
+  --galaxy-cyan: #00f2fe;
+  --galaxy-cyan-glow: rgba(0, 242, 254, 0.35);
+  --galaxy-emerald: #10b981;
+  --galaxy-emerald-glow: rgba(16, 185, 129, 0.35);
+  --galaxy-red: #f43f5e;
+  --galaxy-red-glow: rgba(244, 63, 94, 0.35);
+  --galaxy-gold: #fbbf24;
+  --text-pure: #ffffff;
+  --text-sub: #cbd5e1;
+  --text-muted: #64748b;
+  --slot-bg: rgba(18, 20, 36, 0.7);
+  --slot-border: rgba(255, 255, 255, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--space-black);
+  color: var(--text-pure);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 16px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Космический анимированный фон */
+.galaxy-backdrop {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 20%, #1a103c 0%, #0c0a1f 45%, var(--space-black) 90%);
+  z-index: -3;
+}
+
+.stars-layer {
+  position: fixed;
+  inset: 0;
+  background-image: 
+    radial-gradient(1.5px 1.5px at 25px 35px, #ffffff, transparent),
+    radial-gradient(2px 2px at 80px 120px, var(--galaxy-cyan), transparent),
+    radial-gradient(1.5px 1.5px at 150px 70px, var(--galaxy-purple), transparent),
+    radial-gradient(2px 2px at 220px 190px, #ffffff, transparent);
+  background-size: 260px 260px;
+  animation: starDrift 60s linear infinite;
+  opacity: 0.6;
+  z-index: -2;
+}
+
+@keyframes starDrift {
+  from { background-position: 0 0; }
+  to { background-position: 260px 520px; }
+}
+
+.nebula {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.25;
+}
+
+.nebula-purple {
+  width: 450px;
+  height: 450px;
+  background: var(--galaxy-purple);
+  top: 10%;
+  left: 20%;
+  animation: pulseNebula 12s ease-in-out infinite alternate;
+}
+
+.nebula-cyan {
+  width: 400px;
+  height: 400px;
+  background: var(--galaxy-cyan);
+  bottom: 10%;
+  right: 20%;
+  animation: pulseNebula 14s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes pulseNebula {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.2) translate(30px, 20px); }
+}
+
+/* Основная карточка */
+.galaxy-card {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  background: var(--galaxy-card-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--galaxy-card-border);
+  border-radius: 28px;
+  padding: 30px 24px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 50px rgba(168, 85, 247, 0.15);
+  animation: cardFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Кнопка админки */
+.admin-toggle-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--slot-border);
+  border-radius: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.25s;
+}
+
+.admin-toggle-btn:hover {
+  background: rgba(168, 85, 247, 0.2);
+  color: #fff;
+  border-color: var(--galaxy-purple);
+  transform: rotate(45deg);
+}
+
+/* Навигационные вкладки */
+.nav-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: var(--slot-bg);
+  border: 1px solid var(--slot-border);
+  border-radius: 16px;
+  padding: 5px;
+  margin-bottom: 24px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover { color: var(--text-sub); }
+
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.35) 0%, rgba(99, 102, 241, 0.25) 100%);
+  color: #fff;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  box-shadow: 0 4px 16px rgba(168, 85, 247, 0.2);
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: panelFade 0.3s ease; }
+
+@keyframes panelFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Шапка панелей */
+.panel-header { text-align: center; margin-bottom: 22px; }
+
+.cosmic-badge {
+  display: inline-block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--galaxy-cyan);
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  padding: 5px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px var(--galaxy-cyan-glow);
+}
+
+.pixel-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 17px;
+  color: #ffffff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.9), 0 0 16px rgba(168, 85, 247, 0.5);
+  margin-bottom: 14px;
+}
+
+/* Статус сервера */
+.server-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--slot-bg);
+  border: 1px solid var(--slot-border);
+  padding: 8px 18px;
+  border-radius: 20px;
+}
+
+.status-orb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--galaxy-red);
+  box-shadow: 0 0 10px var(--galaxy-red-glow);
+  transition: all 0.3s ease;
+}
+
+.status-orb.online {
+  background: var(--galaxy-emerald);
+  box-shadow: 0 0 12px var(--galaxy-emerald-glow);
+  animation: pulseGreenOrb 2s infinite;
+}
+
+@keyframes pulseGreenOrb {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.status-msg {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+}
+
+.player-stat {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-sub);
+  border-left: 1px solid var(--slot-border);
+  padding-left: 10px;
+}
+
+/* Слоты IP и Порта */
+.teleport-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.teleport-slot {
+  background: var(--slot-bg);
+  border: 1px solid var(--slot-border);
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.25s;
+}
+
+.teleport-slot:hover {
+  border-color: rgba(168, 85, 247, 0.35);
+  background: rgba(22, 25, 46, 0.8);
+  transform: translateX(2px);
+}
+
+.slot-tag {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.slot-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.action-btn {
+  background: #1c1f36;
+  border: 1px solid var(--slot-border);
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background: var(--galaxy-indigo);
+  border-color: var(--galaxy-indigo);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+.action-btn.copied {
+  background: var(--galaxy-emerald);
+  border-color: var(--galaxy-emerald);
+  color: #000;
+  font-weight: 800;
+}
+
+.glow-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), transparent);
+  margin: 24px 0;
+}
+
+/* Кнопки скачивания */
+.section-badge-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--galaxy-gold);
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.download-hero-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  border-bottom: 4px solid #047857;
+  color: #fff;
+  padding: 16px 20px;
+  border-radius: 16px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 8px 25px var(--galaxy-emerald-glow);
+  transition: all 0.15s ease;
+  margin-bottom: 12px;
+}
+
+.download-hero-btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+}
+
+.download-hero-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  margin-bottom: 15px;
+}
+
+.hero-btn-icon { font-size: 24px; }
+.hero-btn-text .primary { display: block; font-size: 14px; font-weight: 800; letter-spacing: 0.5px; }
+.hero-btn-text .secondary { display: block; font-size: 11px; opacity: 0.85; font-weight: 600; }
+
+.components-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.comp-btn {
+  background: var(--slot-bg);
+  border: 1px solid var(--slot-border);
+  border-bottom: 3px solid rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 12px 6px;
+  border-radius: 14px;
+  text-decoration: none;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.2s;
+}
+
+.comp-btn:hover {
+  background: rgba(30, 34, 64, 0.9);
+  border-color: var(--galaxy-purple);
+  transform: translateY(-2px);
+}
+
+.comp-icon { font-size: 18px; }
+.comp-name { font-size: 12px; font-weight: 800; }
+.comp-hint { font-size: 10px; color: var(--text-muted); }
+
+/* Админка в виде выпадающей панели */
+.admin-drawer {
+  display: none;
+  margin-top: 14px;
+  background: rgba(5, 6, 12, 0.9);
+  border: 1px dashed var(--galaxy-purple);
+  border-radius: 16px;
+  padding: 16px;
+}
+.admin-drawer.active { display: block; }
+.drawer-heading { font-size: 10px; font-weight: 800; color: var(--galaxy-purple); margin-bottom: 10px; }
+.cosmic-input {
+  width: 100%;
+  background: #0d1020;
+  border: 1px solid var(--slot-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 13px;
+  margin-bottom: 8px;
+  outline: none;
+}
+.cosmic-input:focus { border-color: var(--galaxy-purple); }
+.cosmic-btn-accent {
+  width: 100%;
+  background: var(--galaxy-purple);
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* ================= ВКЛАДКА 2: МОДЫ ================= */
+.search-container { margin-bottom: 12px; }
+.cosmic-search {
+  width: 100%;
+  background: var(--slot-bg);
+  border: 1px solid var(--slot-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s;
+}
+.cosmic-search:focus {
+  border-color: var(--galaxy-cyan);
+  box-shadow: 0 0 15px var(--galaxy-cyan-glow);
+}
+
+.filter-pills {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+.filter-pills::-webkit-scrollbar { height: 4px; }
+.filter-pills::-webkit-scrollbar-thumb { background: var(--slot-border); border-radius: 4px; }
+
+.filter-pill {
+  white-space: nowrap;
+  background: var(--slot-bg);
+  border: 1px solid var(--slot-border);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.filter-pill.active {
+  background: var(--galaxy-purple);
+  color: #fff;
+  border-color: var(--galaxy-purple);
+}
+
+.mods-scroll-area {
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mods-scroll-area::-webkit-scrollbar { width: 5px; }
+.mods-scroll-area::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.4); border-radius: 10px; }
+
+.galaxy-mod-item {
+  background: var(--slot-bg);
+  border: 1px solid var(--slot-border);
+  border-radius: 14px;
+  padding: 14px;
+  transition: all 0.2s;
+}
+.galaxy-mod-item:hover {
+  background: rgba(22, 26, 48, 0.85);
+  border-color: rgba(168, 85, 247, 0.4);
+  transform: translateX(2px);
+}
+
+.mod-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.mod-item-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+}
+.mod-item-tag {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+.tag-opt { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+.tag-visual { background: rgba(0, 242, 254, 0.15); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.3); }
+.tag-audio { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+.tag-qol { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+.tag-multiplayer { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+
+.mod-item-description {
+  font-size: 12px;
+  color: var(--text-sub);
+  line-height: 1.45;
+}
+
+/* ================= ВКЛАДКА 3: ГАЙД ================= */
+.guide-steps-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.guide-card {
+  background: var(--slot-bg);
+  border: 1px solid var(--slot-border);
+  border-radius: 18px;
+  padding: 16px;
+}
+.guide-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.step-tag {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--galaxy-gold);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.guide-card-title { font-size: 14px; font-weight: 800; color: #fff; }
+.guide-card-desc { font-size: 12px; color: var(--text-sub); line-height: 1.5; margin-bottom: 10px; }
+
+.guide-img-box {
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--slot-border);
+  margin-top: 6px;
+}
+.guide-img-box img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  display: block;
+}
+
+.cosmic-alert {
+  background: rgba(244, 63, 94, 0.1);
+  border-left: 3px solid var(--galaxy-red);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #fca5a5;
+  margin: 10px 0;
+  line-height: 1.4;
+}
